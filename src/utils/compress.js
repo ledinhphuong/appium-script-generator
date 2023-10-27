@@ -1,7 +1,9 @@
 // @flow
 import fs from 'fs'
 import archiver from 'archiver'
-import BPromise from 'bluebird'
+import BPromise from 'bluebird';
+
+
 
 /**
  * Compresses streams, buffers or directories using zip or tar.

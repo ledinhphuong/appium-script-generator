@@ -1,3 +1,5 @@
+TESTING
+
 # appium-script-generator
 
 The Appium Script Generator will launch a gRPC server, which generates an Appium script whenever it receives a GenerateScript request. After generating the script, it sends the GenerateScript response back to the client.
