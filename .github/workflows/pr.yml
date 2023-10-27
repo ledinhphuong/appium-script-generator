@@ -1,0 +1,53 @@
+name: Verify Pull Request
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  checks: write
+  pull-requests: write
+  contents: write # This is required for actions/checkout
+  id-token: write # This is required for requesting the JWT
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.16.1
+      - run: npm install -g yarn
+      - run: yarn install
+
+      - name: Run Tests
+        id: yarn-test
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        continue-on-error: true
+        with:
+          package-manager: yarn
+          test-script: yarn test
+          annotations: all
+          skip-step: install
+
+      - name: Check Lint
+        id: yarn-lint
+        run: |
+          echo "# Lint Result" >> lint-result.txt
+          yarn lint >> lint-result.txt
+
+      - name: Get steps status
+        run: |
+          echo "# Steps status"  >> lint-result.txt
+          echo "### Yarn test status: ${{ steps.yarn-test.outcome }}" >> lint-result.txt
+          echo "### Yarn lint status: ${{ steps.yarn-lint.outcome }}" >> lint-result.txt
+
+      - name: Comment on Pull Request
+        uses: marocchino/sticky-pull-request-comment@v2.6.2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: lint-result.txt
