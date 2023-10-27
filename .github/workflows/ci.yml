@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  checks: write
+  pull-requests: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.16.1
+
+      - name: Install dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm install -g yarn
+          yarn install --frozen-lockfile --non-interactive
+
+      - name: Lint
+        continue-on-error: false
+        run: |
+          yarn lint
+
+      - name: Test
+        continue-on-error: false
+        run: |
+          yarn test
