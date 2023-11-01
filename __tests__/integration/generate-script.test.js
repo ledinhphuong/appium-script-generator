@@ -14,6 +14,11 @@ const JAVA_JUNIT_INPUT_FILE = path.resolve(
 const NODEJS_MOCHA_INPUT_FILE = path.resolve(
   __dirname, '../resource/nodejs-mocha-input.json')
 
+const AWS_SECRET_KEY = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+
+// eslint-disable-next-line no-console
+console.log('phuonggg', `AWS_SECRET_KEY: ${AWS_SECRET_KEY}`)
+
 /**
  * Integration tests for the generate script gRPC service.
  */
@@ -54,7 +59,7 @@ describe('../../src/appium-script-schema/generate-script.proto', () => {
       {deadline: Date.now() + GENERATE_SCRIPT_TIMEOUT}
     )
 
-    expect(response).toHaveProperty('errorMessage')
+    expect(response).not.toHaveProperty('errorMessage')
     expect(response.errorMessage).toMatch(/Cannot destructure property\.*/)
     expect(response).not.toHaveProperty('scriptInZipFormat')
   })
